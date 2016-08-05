@@ -21,3 +21,10 @@ Build Instructions
 TODO
 
 tl;dr: use Visual Studio (Windows) or xbuild (other platforms).
+
+Licensing
+---------
+
+Copyright 2016 yvt
+
+Licensed with GPLv3
