@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace VxlToObj
+namespace VxlToObj.Core
 {
 	public sealed class SimpleMeshSliceGenerator
 	{

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace VxlToObj
+namespace VxlToObj.Core
 {
 	public sealed class VoxelModel
 	{

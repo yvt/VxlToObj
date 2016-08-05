@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VxlToObj", "VxlToObj\VxlToObj.csproj", "{8F79DC5A-06B2-4F76-9EAD-8D68942BC2D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VxlToObjCore", "VxlToObjCore\VxlToObjCore.csproj", "{CD6293C9-C978-48A3-8397-9BBD8D95A644}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,5 +15,9 @@ Global
 		{8F79DC5A-06B2-4F76-9EAD-8D68942BC2D9}.Debug|x86.Build.0 = Debug|x86
 		{8F79DC5A-06B2-4F76-9EAD-8D68942BC2D9}.Release|x86.ActiveCfg = Release|x86
 		{8F79DC5A-06B2-4F76-9EAD-8D68942BC2D9}.Release|x86.Build.0 = Release|x86
+		{CD6293C9-C978-48A3-8397-9BBD8D95A644}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CD6293C9-C978-48A3-8397-9BBD8D95A644}.Debug|x86.Build.0 = Debug|Any CPU
+		{CD6293C9-C978-48A3-8397-9BBD8D95A644}.Release|x86.ActiveCfg = Release|Any CPU
+		{CD6293C9-C978-48A3-8397-9BBD8D95A644}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{8F79DC5A-06B2-4F76-9EAD-8D68942BC2D9}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>VxlToObj</RootNamespace>
+    <RootNamespace>VxlToObj.Shell</RootNamespace>
     <AssemblyName>VxlToObj</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
@@ -36,28 +36,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Drawing" />
     <Reference Include="Mono.Options">
       <HintPath>..\packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VoxelModel.cs" />
-    <Compile Include="VxlVoxelModelLoader.cs" />
-    <Compile Include="IntVector3.cs" />
-    <Compile Include="SimpleMeshSliceGenerator.cs" />
-    <Compile Include="MeshSlice.cs" />
-    <Compile Include="MeshTextureGenerator.cs" />
-    <Compile Include="Vector2.cs" />
-    <Compile Include="SimpleMeshTextureGenerator.cs" />
-    <Compile Include="ObjWriter.cs" />
-    <Compile Include="Kv6VoxelModelLoader.cs" />
-    <Compile Include="Vector3.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VxlToObjCore\VxlToObjCore.csproj">
+      <Project>{CD6293C9-C978-48A3-8397-9BBD8D95A644}</Project>
+      <Name>VxlToObjCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace VxlToObj
+namespace VxlToObj.Core
 {
 	public sealed class ObjWriter
 	{

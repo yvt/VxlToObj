@@ -1,5 +1,5 @@
 ﻿using System;
-namespace VxlToObj
+namespace VxlToObj.Core
 {
 	public struct Vector2
 	{

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using VxlToObj.Core;
 
-namespace VxlToObj
+namespace VxlToObj.Shell
 {
-	class MainClass
+	class ConsoleShellMain
 	{
 		public static void Main(string[] args)
 		{

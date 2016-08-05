@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace VxlToObj
+namespace VxlToObj.Core
 {
 	public class MeshSlice
 	{
