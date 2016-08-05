@@ -22,6 +22,7 @@
     <LangVersion>Default</LangVersion>
     <Commandlineparameters>LakePonyHiliar.vxl out/LakePonyHiliar.obj</Commandlineparameters>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <Optimize>true</Optimize>
@@ -31,6 +32,7 @@
     <ExternalConsole>true</ExternalConsole>
     <PlatformTarget>x86</PlatformTarget>
     <LangVersion>Default</LangVersion>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

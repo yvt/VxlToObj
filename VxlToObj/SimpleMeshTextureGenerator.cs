@@ -14,6 +14,27 @@ namespace VxlToObj
 		{
 		}
 
+		private static int[] Scale2x(int[] src, int w, int h)
+		{
+			int[] dest = new int[w * h * 4];
+
+			for (int y = 0; y < h; ++y)
+			{
+				int srci = y * w;
+				int desti = srci << 2;
+				for (int x = 0; x < w; ++x)
+				{
+					if (srci + x >= src.Length) {
+						break;
+					}
+					dest[desti + (x << 1)] = dest[desti + (x << 1) + 1] = src[srci + x];
+				}
+				Buffer.BlockCopy(dest, desti << 2, dest, (desti << 2) + (w << 3), w << 3);
+			}
+
+			return dest;
+		}
+
 		public void GenerateTextureAndUV(VoxelModel model, MeshSlices slices, out Bitmap bitmap)
 		{
 			// Collect colors
@@ -46,14 +67,15 @@ namespace VxlToObj
 			int texheight = (colors.Count + texwidth - 1) / texwidth;
 
 			// And then create the texture
-			bitmap = new Bitmap(texwidth, texheight, 
+			bitmap = new Bitmap(texwidth * 2, texheight * 2,
 			                    System.Drawing.Imaging.PixelFormat.Format32bppRgb);
 			var bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
 										  System.Drawing.Imaging.ImageLockMode.WriteOnly,
 										  System.Drawing.Imaging.PixelFormat.Format32bppRgb);
 
-			System.Runtime.InteropServices.Marshal.Copy(colors.ToArray(), 0,
-														bmpdata.Scan0, colors.Count);
+
+			System.Runtime.InteropServices.Marshal.Copy(Scale2x(colors.ToArray(), texwidth, texheight), 0,
+														bmpdata.Scan0, colors.Count * 4);
 
 			bitmap.UnlockBits(bmpdata);
 
@@ -72,12 +94,12 @@ namespace VxlToObj
 					{
 						var scoord = FindSliceCoordForFace(slice, face, slice.Axis, paxis1, paxis2);
 
-						var uv = new Vector2((float) faceu + 0.25f, (float) facev + 0.25f);
+						var uv = new Vector2((float) (faceu << 1) + 0.5f, (float) (facev << 1) + 0.5f);
 						for (int i = face.StartIndex; i < face.EndIndex; ++i)
 						{
 							var vt = verts[i];
-							float u = uv.X + (float)(vt[paxis1] - scoord.X) * 0.5f;
-							float v = uv.Y + (float)(vt[paxis2] - scoord.Y) * 0.5f;
+							float u = uv.X + (float)(vt[paxis1] - scoord.X);
+							float v = uv.Y + (float)(vt[paxis2] - scoord.Y);
 							uvs[i] = new Vector2(u, v);
 						}
 
