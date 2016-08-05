@@ -8,13 +8,19 @@ namespace VxlToObj
 		public static void Main(string[] args)
 		{
 			bool showhelp = false;
+			string inputfmt = null;
+			string outputfmt = null;
 			string slicegen = "simple";
 			string texgen = "simple";
 			var p = new Mono.Options.OptionSet()
 			{
-				{ "s|slice=", "specifies the slice generator. Currently, only 'simple' is supported.",
+				{ "i|in=", "specifies the input format. Currently, only 'vxl' is supported.",
+					v => inputfmt = v },
+				{ "o|out=", "specifies the output format. Currently, only 'obj' is supported.",
+					v => outputfmt = v },
+				{ "s|slicegen=", "specifies the slice generator. Currently, only 'simple' is supported.",
 					v => slicegen = v },
-				{ "t|texture=",  "specifies the texture generator. Currently, only 'simple' is supported.",
+				{ "t|texgen=",  "specifies the texture generator. Currently, only 'simple' is supported.",
 					v => texgen = v },
 				{ "h|help",  "show this message and exit",
 				   v => showhelp = v != null }
@@ -48,6 +54,18 @@ namespace VxlToObj
 			if (texgen != "simple")
 			{
 				Console.Error.WriteLine($"Unknown texture generator: {texgen}");
+				Environment.Exit(1);
+				return;
+			}
+			if (inputfmt != "vxl")
+			{
+				Console.Error.WriteLine($"Unknown input format: {inputfmt}");
+				Environment.Exit(1);
+				return;
+			}
+			if (outputfmt != "obj")
+			{
+				Console.Error.WriteLine($"Unknown output format: {outputfmt}");
 				Environment.Exit(1);
 				return;
 			}
