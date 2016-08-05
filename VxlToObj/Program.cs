@@ -14,13 +14,21 @@ namespace VxlToObj
 			string texgen = "simple";
 			var p = new Mono.Options.OptionSet()
 			{
-				{ "i|in=", "Specifies the input format. \nSupported values: obj, vxl",
+				{ "i|in=", 
+					"Specifies the input format. \n" +
+					"- kv6: VOXLAP engine sprite format.\n" +
+					"- vxl: VOXLAP engine worldmap format.\n",
 					v => inputfmt = v },
-				{ "o|out=", "Specifies the output format. Currently, only 'obj' is supported.",
+				{ "o|out=", 
+					"Specifies the output format.\n" +
+					"- obj: Wavefront .obj file.",
 					v => outputfmt = v },
-				{ "s|slicegen=", "Specifies the slice generator. Currently, only 'simple' is supported.",
+				{ "s|slicegen=", 
+					"Specifies the slice generator.\n" +
+					"- simple: Trivial slice generator that generates up to 6 quads for each voxel.",
 					v => slicegen = v },
-				{ "t|texgen=",  "Specifies the texture generator. Currently, only 'simple' is supported.",
+				{ "t|texgen=",  "Specifies the texture generator.\n" +
+					"- simple: Trivial texture generator. Requires the 'simple' slice generator.",
 					v => texgen = v },
 				{ "h|help",  "Show this message and exit",
 				   v => showhelp = v != null }
