@@ -52,6 +52,8 @@
     <Compile Include="Vector2.cs" />
     <Compile Include="SimpleMeshTextureGenerator.cs" />
     <Compile Include="ObjWriter.cs" />
+    <Compile Include="Kv6VoxelModelLoader.cs" />
+    <Compile Include="Vector3.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
