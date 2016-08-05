@@ -46,7 +46,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VoxelModel.cs" />
     <Compile Include="VxlVoxelModelLoader.cs" />
-    <Compile Include="MeshGenerator.cs" />
     <Compile Include="IntVector3.cs" />
     <Compile Include="SimpleMeshSliceGenerator.cs" />
     <Compile Include="MeshSlice.cs" />
