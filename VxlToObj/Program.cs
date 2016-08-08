@@ -45,7 +45,7 @@ namespace VxlToObj.Shell
 			}
 
 			if (showhelp) {
-				Console.WriteLine("USAGE: VxlToObj INFILE.vxl OUTFILE.obj");
+				Console.WriteLine("USAGE: VxlToObj INFILE OUTFILE.obj [OPTIONS...]");
 				Console.WriteLine("");
 				Console.WriteLine("OPTIONS:");
 				Console.WriteLine("");
@@ -57,6 +57,7 @@ namespace VxlToObj.Shell
 			if (extra.Count != 2)
 			{
 				Console.Error.WriteLine("Two file names must be provided.");
+				Console.Error.WriteLine("Try `VxlToObj --help' for more information.");
 				Environment.Exit(1);
 				return;
 			}
