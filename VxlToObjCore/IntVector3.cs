@@ -21,7 +21,6 @@ namespace VxlToObj.Core
 
 		public int this[Axis3 axis]
 		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get
 			{
 				switch (axis)
@@ -32,7 +31,6 @@ namespace VxlToObj.Core
 					default: throw new ArgumentOutOfRangeException(nameof(axis));
 				}
 			}
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			set
 			{
 				switch (axis)

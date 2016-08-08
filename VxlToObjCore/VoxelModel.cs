@@ -28,26 +28,22 @@ namespace VxlToObj.Core
 
 		public IntVector3 Dimensions =>
 			new IntVector3(width, height, depth);
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
 		public int GetIndexForVoxel(int x, int y, int z)
 		{
 			return (x * height + y) * depth + z;
 		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
 		public int GetIndexForVoxel(IntVector3 p)
 		{
 			return (p.X * height + p.Y) * depth + p.Z;
 		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
 		public bool IsVoxelSolid(int x, int y, int z)
 		{
 			return this[x, y, z] != EmptyVoxel;
 		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
 		public bool IsVoxelSolid(IntVector3 p)
 		{
 			return this[p] != EmptyVoxel;
@@ -55,12 +51,10 @@ namespace VxlToObj.Core
 
 		public uint this[int x, int y, int z]
 		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get
 			{
 				return data[GetIndexForVoxel(x, y, z)];
 			}
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			set
 			{
 				data[GetIndexForVoxel(x, y, z)] = value;
@@ -69,12 +63,10 @@ namespace VxlToObj.Core
 
 		public uint this[IntVector3 pos]
 		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get
 			{
 				return data[GetIndexForVoxel(pos)];
 			}
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			set
 			{
 				data[GetIndexForVoxel(pos)] = value;
