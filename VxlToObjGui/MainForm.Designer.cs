@@ -249,6 +249,7 @@
             // 
             // outputDirectoryTextBox
             // 
+            this.outputDirectoryTextBox.Enabled = false;
             this.outputDirectoryTextBox.Location = new System.Drawing.Point(104, 84);
             this.outputDirectoryTextBox.Name = "outputDirectoryTextBox";
             this.outputDirectoryTextBox.Size = new System.Drawing.Size(228, 23);
