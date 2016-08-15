@@ -15,7 +15,7 @@ namespace VxlToObj.Core
 			this.width = width;
 			this.height = height;
 			this.depth = depth;
-			data = new uint[width * height * depth];
+			data = new uint[checked(width * height * depth)];
 			for (int i = 0; i < data.Length; ++i)
 			{
 				data[i] = EmptyVoxel;

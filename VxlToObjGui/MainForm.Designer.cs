@@ -105,7 +105,8 @@
             this.inputFormatComboBox.Items.AddRange(new object[] {
             "Automatic",
             "VOXLAP Sprite (.kv6)",
-            "VOXLAP Worldmap (.vxl)"});
+			"VOXLAP Worldmap (.vxl)",
+			"MagicaVoxel (.vox)"});
             this.inputFormatComboBox.Location = new System.Drawing.Point(104, 53);
             this.inputFormatComboBox.Name = "inputFormatComboBox";
             this.inputFormatComboBox.Size = new System.Drawing.Size(228, 23);

@@ -13,7 +13,8 @@ namespace VxlToObj.Shell.Gui
         {
             Auto,
             Kv6,
-            Vxl
+            Vxl,
+			MagicaVoxel
         }
         enum OutputFormatSelection
         {
@@ -41,9 +42,12 @@ namespace VxlToObj.Shell.Gui
                         case ".kv6":
                             fmt = InputFormatSelection.Kv6;
                             break;
-                        case ".vxl":
-                            fmt = InputFormatSelection.Vxl;
-                            break;
+						case ".vxl":
+							fmt = InputFormatSelection.Vxl;
+							break;
+						case ".vox":
+							fmt = InputFormatSelection.MagicaVoxel;
+							break;
                         default:
                             return null;
                     }
@@ -151,10 +155,14 @@ namespace VxlToObj.Shell.Gui
                         model = new Kv6VoxelModelLoader().LoadVoxelModel(
                             System.IO.File.ReadAllBytes(file));
                         break;
-                    case InputFormatSelection.Vxl:
-                        model = new VxlVoxelModelLoader().LoadVoxelModel(
-                            System.IO.File.ReadAllBytes(file));
-                        break;
+					case InputFormatSelection.Vxl:
+						model = new VxlVoxelModelLoader().LoadVoxelModel(
+							System.IO.File.ReadAllBytes(file));
+						break;
+					case InputFormatSelection.MagicaVoxel:
+						model = new MagicaVoxelModelLoader().LoadVoxelModel(
+							System.IO.File.ReadAllBytes(file));
+						break;
                     case InputFormatSelection.Auto:
                     default:
                         throw new InvalidOperationException();
@@ -309,14 +317,17 @@ namespace VxlToObj.Shell.Gui
                 switch (opts.InputFormat)
                 {
                     case InputFormatSelection.Auto:
-                        filter = "Supported Files (*.kv6;*.vxl)|*.kv6;*.vxl";
+						filter = "Supported Files (*.kv6;*.vxl;*.vox)|*.kv6;*.vxl;*.vox";
                         break;
                     case InputFormatSelection.Kv6:
                         filter = "VOXLAP Sprite Files (*.kv6)|*.kv6";
                         break;
-                    case InputFormatSelection.Vxl:
-                        filter = "VOXLAP Worldmap Files (*.vxl)|*.vxl";
-                        break;
+					case InputFormatSelection.Vxl:
+						filter = "VOXLAP Worldmap Files (*.vxl)|*.vxl";
+						break;
+					case InputFormatSelection.MagicaVoxel:
+						filter = "MagicaVoxel (*.vox)|*.vox";
+						break;
                     default:
                         throw new InvalidOperationException();
                 }

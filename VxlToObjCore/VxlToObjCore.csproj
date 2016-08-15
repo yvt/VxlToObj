@@ -44,6 +44,7 @@
     <Compile Include="Vector3.cs" />
     <Compile Include="VoxelModel.cs" />
     <Compile Include="VxlVoxelModelLoader.cs" />
+    <Compile Include="MagicaVoxelModelLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -18,7 +18,8 @@ namespace VxlToObj.Shell
 				{ "i|in=", 
 					"Specifies the input format. \n" +
 					"- kv6: VOXLAP engine sprite format.\n" +
-					"- vxl: VOXLAP engine worldmap format.\n",
+					"- vxl: VOXLAP engine worldmap format.\n" +
+					"- vox: MagicaVoxel format.\n",
 					v => inputfmt = v },
 				{ "o|out=", 
 					"Specifies the output format.\n" +
@@ -84,11 +85,15 @@ namespace VxlToObj.Shell
 				if (infile.EndsWith(".vxl", StringComparison.InvariantCultureIgnoreCase))
 				{
 					inputfmt = "vxl";
-				} 
+				}
 				else if (infile.EndsWith(".kv6", StringComparison.InvariantCultureIgnoreCase))
 				{
 					inputfmt = "kv6";
-				} 
+				}
+				else if (infile.EndsWith(".vox", StringComparison.InvariantCultureIgnoreCase))
+				{
+					inputfmt = "vox";
+				}
 				else
 				{
 					Console.Error.WriteLine($"Cannot guess the input format; specify it with -i/--in");
@@ -96,7 +101,7 @@ namespace VxlToObj.Shell
 					return;
 				}
 			} 
-			else if (inputfmt != "vxl" && inputfmt != "kv6")
+			else if (inputfmt != "vxl" && inputfmt != "kv6" && inputfmt != "vox")
 			{
 				Console.Error.WriteLine($"Unknown input format: {inputfmt}");
 				Environment.Exit(1);
@@ -132,6 +137,10 @@ namespace VxlToObj.Shell
 					break;
 				case "kv6":
 					model = new Kv6VoxelModelLoader().LoadVoxelModel(
+						System.IO.File.ReadAllBytes(infile));
+					break;
+				case "vox":
+					model = new MagicaVoxelModelLoader().LoadVoxelModel(
 						System.IO.File.ReadAllBytes(infile));
 					break;
 				default:
