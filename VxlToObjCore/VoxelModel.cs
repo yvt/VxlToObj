@@ -29,12 +29,12 @@ namespace VxlToObj.Core
 		public IntVector3 Dimensions =>
 			new IntVector3(width, height, depth);
         
-		public int GetIndexForVoxel(int x, int y, int z)
+		int GetIndexForVoxel(int x, int y, int z)
 		{
 			return (x * height + y) * depth + z;
 		}
         
-		public int GetIndexForVoxel(IntVector3 p)
+		int GetIndexForVoxel(IntVector3 p)
 		{
 			return (p.X * height + p.Y) * depth + p.Z;
 		}

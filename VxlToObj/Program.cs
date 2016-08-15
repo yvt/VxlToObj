@@ -6,6 +6,91 @@ namespace VxlToObj.Shell
 {
 	class ConsoleShellMain
 	{
+		static IVoxelModelFilter ParseFilter(string flt)
+		{
+			var parts = flt.Split(',');
+			var opts = new Dictionary<string, string>();
+
+			// Parse options
+			for (int i = 1; i < parts.Length; ++i)
+			{
+				var part = parts[i];
+				int idx = part.IndexOf('=');
+				if (idx < 0)
+				{
+					throw new Mono.Options.OptionException("Bad filter parameter specification.: " + part, "filter");
+				}
+				opts[part.Substring(0, idx).ToLowerInvariant()] = part.Substring(idx + 1);
+			}
+
+			IVoxelModelFilter ret = null;
+
+			switch (parts[0])
+			{
+				case "hollowify":
+					ret = new HollowifyFilter();
+
+					if (opts.ContainsKey("thickness"))
+					{
+						int thickness;
+						if (!int.TryParse(opts["thickness"], out thickness))
+						{
+							throw new Mono.Options.OptionException($"Bad value for 'thickness': {opts["thickness"]}", "filter");
+						}
+						if (thickness < 1)
+						{
+							throw new Mono.Options.OptionException($"Bad value for 'thickness': {opts["thickness"]}", "filter");
+						}
+						((HollowifyFilter)ret).Distance = thickness;
+						opts.Remove("thickness");
+					}
+					if (opts.ContainsKey("type"))
+					{
+						switch (opts["type"].ToLowerInvariant())
+						{
+							case "chebyshev":
+								((HollowifyFilter)ret).DistanceType = DistanceType.Chebyshev;
+								break;
+							case "manhattan":
+								((HollowifyFilter)ret).DistanceType = DistanceType.Manhattan;
+								break;
+							default:
+								throw new Mono.Options.OptionException($"Unrecognized value of 'type': {opts["type"]}", "filter");
+						}
+						opts.Remove("type");
+					}
+					if (opts.ContainsKey("boundary"))
+					{
+						switch (opts["boundary"].ToLowerInvariant())
+						{
+							case "solid":
+								((HollowifyFilter)ret).IsExteriorSolid = true;
+								break;
+							case "empty":
+								((HollowifyFilter)ret).IsExteriorSolid = false;
+								break;
+							default:
+								throw new Mono.Options.OptionException($"Unrecognized value of 'boundary': {opts["boundary"]}", "filter");
+						}
+						opts.Remove("boundary");
+					}
+					break;
+				case "solidify":
+					ret = new SolidifyFilter();
+					break;
+				default:
+					throw new Mono.Options.OptionException($"Unknown filter: {parts[0]}", "filter");
+			}
+
+			// Check unprocessed options
+			foreach (var opt in opts)
+			{
+				throw new Mono.Options.OptionException($"The filter {parts[0].ToLowerInvariant()} doesn't accept a parameter named '{opt.Key}'", "filter");
+			}
+
+			return ret;
+		}
+
 		public static void Main(string[] args)
 		{
 			bool showhelp = false;
@@ -13,6 +98,8 @@ namespace VxlToObj.Shell
 			string outputfmt = null;
 			string slicegen = "simple";
 			string texgen = "simple";
+			var filters = new List<IVoxelModelFilter>();
+
 			var p = new Mono.Options.OptionSet()
 			{
 				{ "i|in=", 
@@ -21,10 +108,20 @@ namespace VxlToObj.Shell
 					"- vxl: VOXLAP engine worldmap format.\n" +
 					"- vox: MagicaVoxel format.\n",
 					v => inputfmt = v },
-				{ "o|out=", 
+				{ "o|out=",
 					"Specifies the output format.\n" +
 					"- obj: Wavefront .obj file.",
 					v => outputfmt = v },
+				{ "f|filter=",
+					"Specifies the filter to apply on the model.\n" +
+					"Parameters can be specified like this: --filter=NAME,PROP=VALUE,...\n" + 
+					"Multiple filters can be applied by specifying this option for multiple times.\n" +
+					"- hollowify: Removes invisible voxels.\n" +
+					"    thickness=VALUE: Thickness of the shell. (default = 1)\n" +
+					"    type=chebyshev|manhattan: Specifies the distance function. (default = chebyshev)\n" +
+					"    boundary=empty|solid: Specifies how the space outside the boundary is handled. (default = empty)\n" +
+					"- solidify: Fills the invisible space.",
+					v => filters.Add(ParseFilter(v)) },
 				{ "s|slicegen=", 
 					"Specifies the slice generator.\n" +
 					"- simple: Trivial slice generator that generates up to 6 quads for each voxel.",
@@ -145,6 +242,11 @@ namespace VxlToObj.Shell
 					break;
 				default:
 					throw new InvalidOperationException();
+			}
+
+			foreach (var flt in filters)
+			{
+				flt.Apply(ref model);
 			}
 
 			var slices = new SimpleMeshSliceGenerator().GenerateSlices(model);

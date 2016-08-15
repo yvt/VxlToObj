@@ -45,6 +45,15 @@
     <Compile Include="VoxelModel.cs" />
     <Compile Include="VxlVoxelModelLoader.cs" />
     <Compile Include="MagicaVoxelModelLoader.cs" />
+    <Compile Include="SolidifyFilter.cs" />
+    <Compile Include="IFilter.cs" />
+    <Compile Include="HollowifyFilter.cs" />
+    <Compile Include="Utils\ExteriorAnalyzer.cs" />
+    <Compile Include="Types.cs" />
+    <Compile Include="Utils\DilationFilter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
