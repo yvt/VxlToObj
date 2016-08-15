@@ -59,7 +59,7 @@ namespace VxlToObj.Core
 		{
 		}
 
-		public VoxelModel LoadVoxelModel(byte[] bytes)
+		public VoxelModel LoadVoxelModel(byte[] bytes, IProgressListener progress)
 		{
 			uint magic = BitConverter.ToUInt32(bytes, 0);
 			// int version = BitConverter.ToInt32(bytes, 4);
@@ -144,6 +144,7 @@ namespace VxlToObj.Core
 			{
 				throw new System.IO.IOException("File is corrupted. XYZI chunk is too short.");
 			}
+			progress?.Report("Reading voxels");
 			{
 				var data = voxelChunk.Contents;
 				int end = data.Offset + 4 + numVoxels * 4;
@@ -158,6 +159,10 @@ namespace VxlToObj.Core
 						throw new System.IO.IOException("File is corrupted. Voxel location is out of bounds.");
 					}
 					model[x, y, z] = palette[color];
+					if (((i & 8191) == 0))
+					{
+						progress?.Report((double)(i - data.Offset) / (double)(numVoxels * 4));
+					}
 				}
 			}
 			return model;

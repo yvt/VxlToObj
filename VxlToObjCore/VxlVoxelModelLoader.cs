@@ -5,20 +5,41 @@ namespace VxlToObj.Core
 	{
 		public VxlVoxelModelLoader()
 		{
+			Width = 512;
+			Height = 512;
+			Depth = 64;
 		}
 
-		public VoxelModel LoadVoxelModel(byte[] bytes)
+		public int Width { get; set; }
+		public int Height { get; set; }
+		public int Depth { get; set; }
+
+		public VoxelModel LoadVoxelModel(byte[] bytes, IProgressListener progress)
 		{
-			var model = new VoxelModel(512, 512, 64);
+			int w = Width, h = Height, d = Depth;
+			var model = new VoxelModel(w, h, d);
+			var r = new Random();
 
 			int pos = 0;
 
-			for (int y = 0; y < 512; ++y)
+			progress?.Report("Reading voxels");
+
+			for (int y = 0; y < h; ++y)
 			{
-				for (int x = 0; x < 512; ++x)
+				for (int x = 0; x < w; ++x)
 				{
 					int z = 0;
 					uint color = 0;
+
+					// fill with brownish color
+					for (; z < d; ++z)
+					{
+						uint col = 0x284067;
+						col ^= 0x070707 & (uint) r.Next();
+						model[x, y, z] = col;
+					}
+
+					z = 0;
 					while (true)
 					{
 						int number_4byte_chunks = bytes[pos];
@@ -29,17 +50,22 @@ namespace VxlToObj.Core
 						int len_top;
 						int len_bottom;
 
+						for (; z < top_color_start; ++z)
+						{
+							model[x, y, z] = VoxelModel.EmptyVoxel;
+						}
+
 						int colorpos = pos + 4;
-						for (z = top_color_start; z <= top_color_end; z++)
+						for (; z <= top_color_end; z++)
 						{
 							color = BitConverter.ToUInt32(bytes, colorpos);
 							colorpos += 4;
 							model[x, y, z] = color;
 						}
 
-						if (top_color_end == 62)
+						if (top_color_end == d - 2)
 						{
-							model[x, y, 63] = model[x, y, 62];
+							model[x, y, d - 1] = model[x, y, d - 2];
 						}
 
 						len_bottom = top_color_end - top_color_start + 1;
@@ -63,12 +89,14 @@ namespace VxlToObj.Core
 							colorpos += 4;
 							model[x, y, z] = color;
 						}
-						if (bottom_color_end == 63)
+						if (bottom_color_end == d - 1)
 						{
-							model[x, y, 63] = model[x, y, 62];
+							model[x, y, d - 1] = model[x, y, d - 2];
 						}
 					} // while (true)
 				} // for x
+
+				progress?.Report((double)(y + 1) / h);
 			} // for y
 
 			return model;

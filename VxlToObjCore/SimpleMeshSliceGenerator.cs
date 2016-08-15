@@ -9,13 +9,15 @@ namespace VxlToObj.Core
 		{
 		}
 
-		public MeshSlices GenerateSlices(VoxelModel model)
+		public MeshSlices GenerateSlices(VoxelModel model, IProgressListener progress)
 		{
 			var slices = new MeshSlices();
 			var dims = model.Dimensions;
 
 			int totalsteps = 2 * (model.Width + model.Height + model.Depth);
 			int step = 0;
+
+			progress?.Report("Generating slices");
 
 			for (int iaxis = 0; iaxis < 3; ++iaxis)
 			{
@@ -37,7 +39,7 @@ namespace VxlToObj.Core
 					for (int layer = 0; layer < dim0; ++layer)
 					{
 						++step;
-						Console.WriteLine($"slice generation... {step}/{totalsteps}");
+						progress?.Report((double)step / totalsteps);
 
 						var faces = new List<int>();
 						var ret = new List<IntVector3>();

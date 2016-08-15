@@ -14,18 +14,24 @@ namespace VxlToObj.Core
 		public DistanceType DistanceType { get; set; }
 		public bool IsExteriorSolid { get; set; }
 
-		public void Apply(ref VoxelModel model)
+		public void Apply(ref VoxelModel model, IProgressListener progress)
 		{
 			var m = model;
+
+			progress?.Report("Analyzing structure");
 			var ext = new ExteriorAnalyzer()
 			{
 				Model = m
-			}.Analyze();
+			}.Analyze(new ProgressMapper(progress, 0.0, 1.0 / 3.0, null));
+
+			progress?.Report("Creating shell");
 			var extexpanded = new DilationFilter()
 			{
 				Distance = Distance,
 				DistanceType = DistanceType
-			}.Apply(ext);
+			}.Apply(ext, new ProgressMapper(progress, 1.0 / 3.0, 1.0 / 3.0, null));
+
+			progress?.Report("Removing invisible voxels");
 
 			int d1 = m.Width;
 			int d2 = m.Height;
@@ -43,6 +49,7 @@ namespace VxlToObj.Core
 						}
 					}
 				}
+				progress?.Report((double)(x - d) / (d1 - d * 2) * (1.0 / 3.0) + 2.0 / 3.0);
 			}
 		}
 	}

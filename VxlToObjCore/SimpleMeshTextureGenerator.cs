@@ -35,15 +35,28 @@ namespace VxlToObj.Core
 			return dest;
 		}
 
-		public void GenerateTextureAndUV(VoxelModel model, MeshSlices slices, out Bitmap bitmap)
+		public void GenerateTextureAndUV(VoxelModel model, MeshSlices slices, out Bitmap bitmap, IProgressListener progress)
 		{
 			// Collect colors
 			var colors = new List<int>(); // Marshal.Copy doesn't support uint[] lol
+
+			int totalSlices = 0;
+			foreach (var slicelist in slices)
+			{
+				totalSlices += slicelist.Length;
+			}
+
+			int sliceIndex = 0;
+
+			progress?.Report("Collecting colors");
 
 			foreach (var slicelist in slices)
 			{
 				foreach (var slice in slicelist)
 				{
+					++sliceIndex;
+					progress?.Report((double)sliceIndex / totalSlices);
+
 					var verts = slice.Positions;
 					Axis3 paxis1, paxis2;
 					GetPerpendicularAxises(slice.Axis, out paxis1, out paxis2);
@@ -81,10 +94,17 @@ namespace VxlToObj.Core
 
 			// Assign UVs
 			int faceu = 0, facev = 0;
+
+			sliceIndex = 0;
+			progress?.Report("Assigning UV coordinates");
+
 			foreach (var slicelist in slices)
 			{
 				foreach (var slice in slicelist)
 				{
+					++sliceIndex;
+					progress?.Report((double)sliceIndex / totalSlices);
+
 					var verts = slice.Positions;
 					var uvs = slice.UVs = new Vector2[slice.Positions.Length];
 					Axis3 paxis1, paxis2;

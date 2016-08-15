@@ -98,6 +98,7 @@ namespace VxlToObj.Shell
 			string outputfmt = null;
 			string slicegen = "simple";
 			string texgen = "simple";
+			bool quiet = false;
 			var filters = new List<IVoxelModelFilter>();
 
 			var p = new Mono.Options.OptionSet()
@@ -129,6 +130,8 @@ namespace VxlToObj.Shell
 				{ "t|texgen=",  "Specifies the texture generator.\n" +
 					"- simple: Trivial texture generator. Requires the 'simple' slice generator.",
 					v => texgen = v },
+				{ "q|quiet",  "No progress indicators are shown",
+				   v => quiet = v != null },
 				{ "h|help",  "Show this message and exit",
 				   v => showhelp = v != null }
 			};
@@ -225,36 +228,103 @@ namespace VxlToObj.Shell
 				return;
 			}
 
-			VoxelModel model;
-			switch (inputfmt)
+			var modelTask = TaskBuilder.Start("Loading voxels", (progress) =>
 			{
-				case "vxl":
-					model = new VxlVoxelModelLoader().LoadVoxelModel(
-						System.IO.File.ReadAllBytes(infile));
-					break;
-				case "kv6":
-					model = new Kv6VoxelModelLoader().LoadVoxelModel(
-						System.IO.File.ReadAllBytes(infile));
-					break;
-				case "vox":
-					model = new MagicaVoxelModelLoader().LoadVoxelModel(
-						System.IO.File.ReadAllBytes(infile));
-					break;
-				default:
-					throw new InvalidOperationException();
-			}
+				switch (inputfmt)
+				{
+					case "vxl":
+						return new VxlVoxelModelLoader().LoadVoxelModel(
+							System.IO.File.ReadAllBytes(infile), progress);
+					case "kv6":
+						return new Kv6VoxelModelLoader().LoadVoxelModel(
+							System.IO.File.ReadAllBytes(infile), progress);
+					case "vox":
+						return new MagicaVoxelModelLoader().LoadVoxelModel(
+							System.IO.File.ReadAllBytes(infile), progress);
+					default:
+						throw new InvalidOperationException();
+				}
+			});
+			
 
 			foreach (var flt in filters)
 			{
-				flt.Apply(ref model);
+				modelTask = modelTask.Then(flt.GetType().Name, (model, progress) =>
+				{
+					flt.Apply(ref model, progress);
+					return model;
+				});
 			}
 
-			var slices = new SimpleMeshSliceGenerator().GenerateSlices(model);
+			var sliceTask = modelTask.Then("Generating mesh", (model, progress) =>
+			{
+				return new
+				{
+					Slices = new SimpleMeshSliceGenerator().GenerateSlices(model, progress),
+					Model = model
+				};
+			});
 
-			System.Drawing.Bitmap bmp;
-			new SimpleMeshTextureGenerator().GenerateTextureAndUV(model, slices, out bmp);
+			var textureTask = sliceTask.Then("Generating texture", (prev, progress) =>
+			{
+				System.Drawing.Bitmap bmp;
+				new SimpleMeshTextureGenerator().GenerateTextureAndUV(prev.Model, prev.Slices, out bmp, progress);
+				return new {
+					Slices = prev.Slices,
+					Model = prev.Model,
+					Texture = bmp
+				};
+			});
 
-			new ObjWriter().Save(slices, bmp, outfile);
+			var outputTask = textureTask.Then("Saving mesh", (prev, progress) =>
+			{
+				new ObjWriter().Save(prev.Slices, prev.Texture, outfile, progress);
+				return (object) null;
+			});
+
+			var task = outputTask.Complete();
+
+			if (quiet)
+			{
+				task(null);
+				return;
+			}
+
+			var progressListener = new ConsoleProgressListener()
+			{
+				AutoUpdate = false
+			};
+			progressListener.Start();
+
+			Exception resultEx = null;
+
+			var th = new System.Threading.Thread(() =>
+			{
+				try
+				{
+					task(progressListener);
+				}
+				catch (Exception ex)
+				{
+					resultEx = ex;
+				}
+			});
+
+			th.Start();
+
+			while (th.IsAlive)
+			{
+				progressListener.Update();
+				System.Threading.Thread.Sleep(100);
+			}
+
+			progressListener.Stop();
+
+			if (resultEx != null)
+			{
+				Console.Error.WriteLine(resultEx.ToString());
+			}
+
 		}
 	}
 }

@@ -13,7 +13,7 @@ namespace VxlToObj.Core
 			public int zpos;
 		}
 
-		public VoxelModel LoadVoxelModel(System.IO.Stream stream, out Vector3 pivot)
+		public VoxelModel LoadVoxelModel(System.IO.Stream stream, out Vector3 pivot, IProgressListener progress)
 		{
 			var reader = new System.IO.BinaryReader(stream);
 
@@ -41,11 +41,17 @@ namespace VxlToObj.Core
 			int numblocks = reader.ReadInt32();
 			var blocks = new Kv6Block[numblocks];
 
+			progress?.Report("Reading voxels");
+
 			for (int i = 0; i < blocks.Length; ++i)
 			{
 				blocks[i].color = reader.ReadUInt32();
 				blocks[i].zpos = (int) reader.ReadUInt16();
 				reader.ReadUInt16(); // skip visFaces & lighting
+				if (((i & 8191) == 0))
+				{
+					progress?.Report((double)i / blocks.Length * 0.5);
+				}
 			}
 
 			var xyoffset = new int[xsiz * ysiz];
@@ -60,6 +66,8 @@ namespace VxlToObj.Core
 				xyoffset[i] = (int) reader.ReadUInt16();
 			}
 
+			progress?.Report("Placing voxels");
+
 			int pos = 0;
 			var model = new VoxelModel(xsiz, ysiz, zsiz);
 			for (int x = 0; x < xsiz; ++x) {
@@ -71,6 +79,8 @@ namespace VxlToObj.Core
 						pos += 1;
 					}
 				}
+
+				progress?.Report((double)pos / blocks.Length * 0.5 + 0.5);
 			}
 
 			pivot = new Vector3(xpivot, ypivot, zpivot);
@@ -78,20 +88,20 @@ namespace VxlToObj.Core
 			return model;
 		}
 
-		public VoxelModel LoadVoxelModel(System.IO.Stream stream)
+		public VoxelModel LoadVoxelModel(System.IO.Stream stream, IProgressListener progress)
 		{
 			Vector3 dummy;
-			return LoadVoxelModel(stream, out dummy);
+			return LoadVoxelModel(stream, out dummy, progress);
 		}
 
-		public VoxelModel LoadVoxelModel(byte[] bytes, out Vector3 pivot)
+		public VoxelModel LoadVoxelModel(byte[] bytes, out Vector3 pivot, IProgressListener progress)
 		{
-			return LoadVoxelModel(new System.IO.MemoryStream(bytes, false), out pivot);
+			return LoadVoxelModel(new System.IO.MemoryStream(bytes, false), out pivot, progress);
 		}
 
-		public VoxelModel LoadVoxelModel(byte[] bytes)
+		public VoxelModel LoadVoxelModel(byte[] bytes, IProgressListener progress)
 		{
-			return LoadVoxelModel(new System.IO.MemoryStream(bytes, false));
+			return LoadVoxelModel(new System.IO.MemoryStream(bytes, false), progress);
 		}
 	}
 }

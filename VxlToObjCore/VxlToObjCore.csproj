@@ -51,6 +51,9 @@
     <Compile Include="Utils\ExteriorAnalyzer.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="Utils\DilationFilter.cs" />
+    <Compile Include="IProgressListener.cs" />
+    <Compile Include="ProgressMapper.cs" />
+    <Compile Include="TaskBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />

@@ -15,7 +15,7 @@ namespace VxlToObj.Core
 		public int Distance { get; set; }
 		public DistanceType DistanceType { get; set; }
 
-		public bool[,,] Apply(bool[,,] field)
+		public bool[,,] Apply(bool[,,] field, IProgressListener progress)
 		{
 			int d1 = field.GetLength(0);
 			int d2 = field.GetLength(1);
@@ -85,6 +85,7 @@ namespace VxlToObj.Core
 					DoneOne:;
 					}
 				}
+				progress?.Report((double)(x + 1) / d1);
 			}
 
 			return ret;

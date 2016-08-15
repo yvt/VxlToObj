@@ -9,23 +9,31 @@ namespace VxlToObj.Core
 		{
 		}
 
-		public void Apply(ref VoxelModel model)
+		public void Apply(ref VoxelModel model, IProgressListener progress)
 		{
 			var m = model;
+
+			progress?.Report("Analyzing structure");
 			var ext = new ExteriorAnalyzer()
 			{
 				Model = m
-			}.Analyze();
+			}.Analyze(new ProgressMapper(progress, 0, 1.0 / 3.0, null));
 
 			// Find the initial points (solid voxels adjacent to interior empty voxels)
+			progress?.Report("Planting seeds");
 			var queue = new Queue<IntVector3>();
 			int width = m.Width, height = m.Height, depth = m.Depth;
+			int numVoxelsToProcess = 0;
 			for (int x = 0; x < width; ++x)
 			{
 				for (int y = 0; y < height; ++y)
 				{
 					for (int z = 0; z < depth; ++z)
 					{
+						if (!ext[x, y, z] && !model.IsVoxelSolid(x, y, z))
+						{
+							++numVoxelsToProcess;
+						}
 						if (!model.IsVoxelSolid(x, y, z))
 						{
 							continue;
@@ -33,9 +41,20 @@ namespace VxlToObj.Core
 						queue.Enqueue(new IntVector3(x, y, z));
 					}
 				}
+				progress?.Report((double)(x + 1) / width * (1.0 / 3.0) + (1.0 / 3.0));
 			}
+			numVoxelsToProcess += queue.Count;
+
+			progress?.Report("Filling inside");
+			int numProcessed = 0;
 			while (queue.Count > 0)
 			{
+				++numProcessed;
+				if ((numProcessed & 2047) == 0)
+				{
+					progress?.Report((double)numProcessed / numVoxelsToProcess * (1.0 / 3.0) + (2.0 / 3.0));
+				}
+
 				var p = queue.Dequeue();
 				uint color = m[p];
 				if (p.X > 0)

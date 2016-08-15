@@ -153,15 +153,15 @@ namespace VxlToObj.Shell.Gui
                 {
                     case InputFormatSelection.Kv6:
                         model = new Kv6VoxelModelLoader().LoadVoxelModel(
-                            System.IO.File.ReadAllBytes(file));
+                            System.IO.File.ReadAllBytes(file), null);
                         break;
 					case InputFormatSelection.Vxl:
 						model = new VxlVoxelModelLoader().LoadVoxelModel(
-							System.IO.File.ReadAllBytes(file));
+							System.IO.File.ReadAllBytes(file), null);
 						break;
 					case InputFormatSelection.MagicaVoxel:
 						model = new MagicaVoxelModelLoader().LoadVoxelModel(
-							System.IO.File.ReadAllBytes(file));
+							System.IO.File.ReadAllBytes(file), null);
 						break;
                     case InputFormatSelection.Auto:
                     default:
@@ -172,17 +172,17 @@ namespace VxlToObj.Shell.Gui
                 throw new Exception("Failed to load the input file (I/O error or file type mismatch?).", ex);
             }
 
-            var slices = new SimpleMeshSliceGenerator().GenerateSlices(model);
+            var slices = new SimpleMeshSliceGenerator().GenerateSlices(model, null);
 
             System.Drawing.Bitmap bmp;
-            new SimpleMeshTextureGenerator().GenerateTextureAndUV(model, slices, out bmp);
+            new SimpleMeshTextureGenerator().GenerateTextureAndUV(model, slices, out bmp, null);
 
             var outpath = opts.GetOutputPathForInputPath(file);
 
             switch (outfmt)
             {
                 case OutputFormatSelection.WavefrontObj:
-                    new ObjWriter().Save(slices, bmp, outpath);
+                    new ObjWriter().Save(slices, bmp, outpath, null);
                     break;
             }
         }

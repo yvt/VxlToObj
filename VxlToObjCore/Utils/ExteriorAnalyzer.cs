@@ -17,7 +17,7 @@ namespace VxlToObj.Core
 		{
 		}
 
-		public bool[,,] Analyze()
+		public bool[,,] Analyze(IProgressListener progress)
 		{
 			int width = Model.Width;
 			int height = Model.Height;
@@ -53,6 +53,8 @@ namespace VxlToObj.Core
 				}
 			}
 
+			int numProcessed = 0;
+
 			while (queue.Count > 0)
 			{
 				var p = queue.Dequeue();
@@ -80,6 +82,12 @@ namespace VxlToObj.Core
 				{
 					Traverse(p.X, p.Y, p.Z + 1);
 				}
+
+				++numProcessed;
+
+				// this might move the progress bar in a funny way but
+				// we can't do better since we don't know how many exterior voxels are there yet
+				progress?.Report((double)numProcessed / (numProcessed + queue.Count));
 			}
 
 			var ret = exterior;
