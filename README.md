@@ -16,6 +16,7 @@ Input file formats:
 
 - [VOXLAP](http://advsys.net/ken/voxlap/voxlap05.htm) sprite format (.kv6)
 - [VOXLAP](http://advsys.net/ken/voxlap/voxlap05.htm) worldmap format (.vxl)
+- [MagicaVoxel](https://ephtracy.github.io) format (.vox)
 
 Output file format:
 
